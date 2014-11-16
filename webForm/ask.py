@@ -71,7 +71,7 @@ def answers(page):
     if not page or page <= 0:
         page = 1
 
-    LIMIT = 2
+    LIMIT = 10
     show_next = True
     show_previous = page != 1
 
