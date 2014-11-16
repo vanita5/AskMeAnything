@@ -19,9 +19,6 @@ Create a Twitter application on [apps.twitter.com](https://apps.twitter.com/app/
 * After your app has been created go to <i>Permissions</i> and choose <i>Read and Write</i>
 * Now go to <i>Keys and Access Tokens</i>. On the bottom of the page create your access tokens.
 
-#### Initialize the database ####
-    $ sqlite ama.db < schema.sql
-
 #### Config file ####
 Copy <b>config.py.SAMPLE</b> to <b>config.py</b>, open it with your text editor and fill in the vaules.
 

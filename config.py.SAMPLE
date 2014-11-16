@@ -18,3 +18,6 @@ consumer_secret = 'YOUR CONSUMER SECRET HERE'
 
 access_token = 'YOUR ACCESS TOKEN HERE'
 access_token_secret = 'YOUR ACCESS TOKEN SECRET HERE'
+
+#Name of the database file you should have created
+DATABASE = 'ama.db'
