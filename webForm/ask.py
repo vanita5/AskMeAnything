@@ -86,7 +86,7 @@ def faq():
 
 
 @app.route('/ask', methods=['POST', 'GET'])
-@limiter.limit("1/minute", key_func = lambda : request.environ['REMOTE_ADDR'])
+@limiter.limit("1/minute")
 def doAsk():
     try:
         if request.method == 'POST':
@@ -168,6 +168,11 @@ def get_since_id():
 def save_since_id(since_id):
     with open('since_id', 'w') as f:
         f.write(str(since_id))
+
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return render_template('ask.html', name=config.USERNAME, rate=1)
 
 
 ###############

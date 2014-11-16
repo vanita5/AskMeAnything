@@ -17,6 +17,8 @@
 <p style="color: green">Thanks for the question! You can ask another one in 2 minutes. TODO</p>
 {% elif error %}
 <p style="color: red">An error occurred while asking your question. Try again later.</p>
+{% elif rate %}
+<p style="color: red">Rate Limit exceeded. Please try again later.</p>
 {% else %}
 <p>&nbsp;</p>
 {% endif %}
