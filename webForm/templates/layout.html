@@ -21,7 +21,7 @@
                     <nav>
                         <ul class="nav masthead-nav">
                           <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Ask</a></li>
-                          <li {% if request.path == '/answers' %}class="active"{% endif %}><a href="/answers">Answers</a></li>
+                          <li {% if request.path.startswith('/answers') %}class="active"{% endif %}><a href="/answers">Answers</a></li>
                           <li {% if request.path == '/faq' %}class="active"{% endif %}><a href="/faq">How does it work?</a></li>
                         </ul>
                     </nav>

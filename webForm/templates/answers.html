@@ -19,8 +19,16 @@
         </div>
     </div>
     {% endfor %}
+    {% if show_previous %}
+       <div class="previous">
+           <a href="/answers/{{page - 1}}" class="btn btn-default btn-xs active" role="button">Previous</a>
+       </div>
+    {% endif %}
+    {% if show_next %}
+       <div class="next">
+           <a href="/answers/{{page + 1}}" class="btn btn-default btn-xs active" role="button">Next</a>
+       </div>
+    {% endif %}
 </div>
-
-{{ pagination.links|safe }}
 
 {% endblock %}

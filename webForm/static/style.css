@@ -2,6 +2,11 @@ body {
     padding-top: 0;
 }
 
+html {
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
 #forkongithub a {
     background:#000;
     color:#fff;
@@ -105,6 +110,11 @@ textarea {
     width: 100%;
 }
 
+.masthead {
+    height: 10px;
+    position: absolute;
+}
+
 .site-wrapper {
     position: relative;
 }
@@ -122,4 +132,19 @@ textarea {
 
 .panel-footer small {
     text-align: left;
+}
+
+.previous {
+    text-align: left;
+    float: left;
+}
+
+.next {
+    text-align: right;
+}
+
+.next a,
+.previous a{
+    height: 20px;
+    text-align: center;
 }

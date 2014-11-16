@@ -7,7 +7,6 @@ import calendar
 import datetime
 from flask_limiter import Limiter
 from contextlib import closing
-from flask_paginate import Pagination
 from flask import Flask, render_template, request, redirect, g
 
 
@@ -65,19 +64,34 @@ def ask():
     return render_template('ask.html', name=config.USERNAME, asked=asked, error=error)
 
 
-@app.route('/answers')
-def answers():
-    try:
-        page = int(request.args.get('page', 1))
-    except:
+@app.route('/answers', defaults={'page': 1})
+@app.route('/answers/<int:page>')
+def answers(page):
+
+    if not page or page <= 0:
         page = 1
 
-    answers = get_answers()
-    pagination = Pagination(page=page, total=len(answers), search=False, record_name='answers')
+    LIMIT = 2
+    show_next = True
+    show_previous = page != 1
+
+    total = count_answers()
+    start = (page - 1) * LIMIT
+
+    if start >= total:
+        start -= 1
+    end = start + LIMIT
+
+    next_start = start + LIMIT
+    if next_start >= total:
+        show_next = False
+    answers = get_answers(start, end)
     return render_template('answers.html',
                            answers=answers,
-                           pagination=pagination,
-                           screen_name=config.SCREENNAME)
+                           screen_name=config.SCREENNAME,
+                           show_next=show_next,
+                           show_previous=show_previous,
+                           page=page)
 
 
 @app.route('/faq')
@@ -143,12 +157,21 @@ def insert_answer(q_id, answer, tweet_id, timestamp):
         g.db.commit()
 
 
-def get_answers():
+def count_answers():
+    cur = g.db.execute('SELECT COUNT(*)\
+                        FROM answers a\
+                        INNER JOIN questions q\
+                        ON a.q_id = q.tweet_id')
+    return cur.fetchall()[0][0]
+
+
+def get_answers(start=0, end=5):
     cur = g.db.execute('SELECT q.question, q.author, q.timestamp, a.answer, a.tweet_id\
                         FROM answers a\
                         INNER JOIN questions q\
                         ON a.q_id = q.tweet_id\
-                        ORDER BY id DESC')
+                        ORDER BY id DESC\
+                        LIMIT ' + str(start) + ', ' + str(end))
     return [dict(question=row[0],
                  author=row[1],
                  timestamp=datetime.datetime.fromtimestamp(int(row[2])),
