@@ -1,7 +1,20 @@
 ### Twitter Keys
 
-consumer_key = ''
-consumer_secret = ''
+#This represents the username that is used on the website.
+#Best practice would be the use of your Twitter account name.
+USERNAME = 'REPLACE WITH YOUR NAME!'
 
-access_token = ''
-access_token_secret = ''
+#Fill in the @name of your main Twitter account here.
+#This account is goning to be mentioned from the Twitter bot.
+#
+#    If your name is @username
+#    the value has to be username (without the @)
+#
+#Do NOT fill in the name of your Twitter bot here!
+SCREENNAME = 'REPLACE WITH YOU @NAME'
+
+consumer_key = 'YOUR CONSUMER KEY HERE'
+consumer_secret = 'YOUR CONSUMER SECRET HERE'
+
+access_token = 'YOUR ACCESS TOKEN HERE'
+access_token_secret = 'YOUR ACCESS TOKEN SECRET HERE'

@@ -59,3 +59,12 @@
         box-shadow:4px 4px 10px rgba(0,0,0,0.8);
     }
 }
+
+textarea {
+   resize: none;
+}
+
+.btn-default {
+    height: 74px;
+    width: 90px;
+}

@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Ask @TODO anything anonymously">
     <meta name="author" content="">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cover.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="site-wrapper">
@@ -16,7 +16,7 @@
         <div class="cover-container">
             <div class="masthead clearfix">
                 <div class="inner">
-                    <h3 class="masthead-brand">Ask @TODO Anything</h3>
+                    <h3 class="masthead-brand">Ask Me Anything</h3>
                     <nav>
                         <ul class="nav masthead-nav">
                           <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Ask</a></li>
