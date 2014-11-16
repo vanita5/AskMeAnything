@@ -5,9 +5,10 @@ import tweepy
 import sqlite3
 import calendar
 import datetime
+from flask_limiter import Limiter
 from contextlib import closing
 from flask_paginate import Pagination
-from flask import Flask, Blueprint, render_template, request, redirect, g
+from flask import Flask, render_template, request, redirect, g
 
 
 # #################
@@ -26,7 +27,7 @@ except:
 
 # init Flask
 app = Flask(__name__)
-
+limiter = Limiter(app, global_limits=["200 per day", "50 per hour"])
 
 ###############
 # FLASK BLOCK #
@@ -85,6 +86,7 @@ def faq():
 
 
 @app.route('/ask', methods=['POST', 'GET'])
+@limiter.limit("1/minute", key_func = lambda : request.environ['REMOTE_ADDR'])
 def doAsk():
     try:
         if request.method == 'POST':
@@ -145,7 +147,8 @@ def get_answers():
     cur = g.db.execute('SELECT q.question, q.author, q.timestamp, a.answer, a.tweet_id\
                         FROM answers a\
                         INNER JOIN questions q\
-                        ON a.q_id = q.tweet_id')
+                        ON a.q_id = q.tweet_id\
+                        ORDER BY id DESC')
     return [dict(question=row[0],
                  author=row[1],
                  timestamp=datetime.datetime.fromtimestamp(int(row[2])),
