@@ -119,6 +119,10 @@ textarea {
     position: relative;
 }
 
+textarea.form-control {
+    height: 74px;
+}
+
 .panel {
     color: gray;
     text-shadow: none;

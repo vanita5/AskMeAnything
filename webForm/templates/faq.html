@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
+<div id="container">
 <h1 class="cover-heading">How does it work?</h1>
 <hr>
 <h4>How can I ask you a question?</h4>
@@ -7,7 +8,7 @@
 
 <br/>
 <h4>Okay, but what's with your answer?</h4>
-<p>Well, there is a <a href="https://twitter.com/ask_vanita5"><i><b>Twitter Bot</b></i></a> that is going to send me the question via Twitter.
+<p>Well, there is a <a href="https://twitter.com/ask_vanita5" target="_blank"><i><b>Twitter Bot</b></i></a> that is going to send me the question via Twitter.
     As soon as I reply to the question, you can see the answer under <a href="/answers"><i>Answers</i></a>.
     And of course you can follow the Twitter bot and me, to see the answerS directly in your timeline.</p>
 
@@ -19,12 +20,13 @@ Not a rate limit error? Well, I guess then there's something wrong with Twitter.
 
 <br/>
 <h4>I want this!</h4>
-<p>Hey, look, it's free and open source! <href="http://github.com/vanita5"><b>CLICK ME</b></href><br/>
+<p>Hey, look, it's free and open source! <a href="http://github.com/vanita5" target="_blank"><b>CLICK ME</b></a><br/>
 You need at least a webspace or a server that is capable of running a python application. Checkout the README, the installation is described there.<br/>
 If you have no idea what I'm talking about here... well, ask me! I could host a instance on my server on a subdomain if you ask nicely :)</p>
 
 <br/>
 <h4>I found a bug/I have an improvement</h4>
-<p>Protipp: Fork the repository on GitHub, make your changes and createa pull request.
+<p>Protipp: Fork the repository on GitHub, make your changes and create a pull request.
 If you can't code, please create an issue on GitHub, this is the fastest way for me to do it.</p>
+</div>
 {% endblock %}
