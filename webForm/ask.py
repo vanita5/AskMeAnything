@@ -4,8 +4,10 @@ import config
 import tweepy
 import sqlite3
 import calendar
+import datetime
 from contextlib import closing
-from flask import Flask, render_template, request, redirect, g
+from flask_paginate import Pagination
+from flask import Flask, Blueprint, render_template, request, redirect, g
 
 
 # #################
@@ -17,6 +19,7 @@ try:
     auth = tweepy.OAuthHandler(config.consumer_key, config.consumer_secret)
     auth.set_access_token(config.access_token, config.access_token_secret)
     twitter = tweepy.API(auth)
+    ME = twitter.me()
 except:
     print "Twitter authentication failed!"
     sys.exit(1)
@@ -63,7 +66,17 @@ def ask():
 
 @app.route('/answers')
 def answers():
-    return render_template('answers.html')
+    try:
+        page = int(request.args.get('page', 1))
+    except:
+        page = 1
+
+    answers = get_answers()
+    pagination = Pagination(page=page, total=len(answers), search=False, record_name='answers')
+    return render_template('answers.html',
+                           answers=answers,
+                           pagination=pagination,
+                           screen_name=config.SCREENNAME)
 
 
 @app.route('/faq')
@@ -78,7 +91,7 @@ def doAsk():
             question = request.form.get('q')
 
             # Validate length
-            if len(question) > 130:
+            if len(question) > 130 or len(question) <= 0:
                 raise
 
             # Send to Twitter
@@ -128,6 +141,19 @@ def insert_answer(q_id, answer, tweet_id, timestamp):
         g.db.commit()
 
 
+def get_answers():
+    cur = g.db.execute('SELECT q.question, q.author, q.timestamp, a.answer, a.tweet_id\
+                        FROM answers a\
+                        INNER JOIN questions q\
+                        ON a.q_id = q.tweet_id')
+    return [dict(question=row[0],
+                 author=row[1],
+                 timestamp=datetime.datetime.fromtimestamp(int(row[2])),
+                 answer=row[3],
+                 tweet_id=row[4])
+            for row in cur.fetchall()]
+
+
 def get_since_id():
     try:
         with open('since_id', 'r') as f:
@@ -166,7 +192,7 @@ class AnswerDownloader(threading.Thread):
                 q_id = mentions[i].in_reply_to_status_id
 
                 answer = mentions[i].text
-                my_screen_name = twitter.me().screen_name
+                my_screen_name = ME.screen_name
                 answer = answer.replace('@' + my_screen_name + ' ', '')
 
                 insert_answer(q_id, answer, tweet_id, timestamp_utc)

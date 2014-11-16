@@ -1,6 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1 class="cover-heading">Answers</h1>
 
-<p class="lead">1</p>
+<div id="container">
+    {% for answer in answers %}
+    <div class="card">
+        <div class="panel panel-default">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ answer.question }}</h4>
+                </div>
+                <div class="list-group-item">
+                    <p class="list-group-item-text">{{ answer.answer }}</p>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <small>{{ answer.author }} asked at <a href="https://twitter.com/{{screen_name}}/status/{{answer.tweet_id}}/" target="_blank">{{answer.timestamp}}</a></small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{{ pagination.links|safe }}
+
 {% endblock %}
