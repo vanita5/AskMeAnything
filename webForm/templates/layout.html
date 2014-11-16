@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="de">
+    <title>Ask Me Anything</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ask @TODO anything anonymously">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cover.css') }}">
+</head>
+<body>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="masthead clearfix">
+                <div class="inner">
+                    <h3 class="masthead-brand">Ask @TODO Anything</h3>
+                    <nav>
+                        <ul class="nav masthead-nav">
+                          <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Ask</a></li>
+                          <li {% if request.path == '/answers' %}class="active"{% endif %}><a href="/answers">Answers</a></li>
+                          <li {% if request.path == '/faq' %}class="active"{% endif %}><a href="/faq">How does it work?</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <span id="forkongithub"><a href="https://github.com/vanita5/TODO">Fork me on GitHub</a></span>
+
+            <div class="inner cover">
+                {% block content %}
+			    {% endblock %}
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>Copyright 2014 <a href="https://twitter.com/_vanita5">@_vanita5</a> | Ask Me Anything is licensed under the
+                        <a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU Generel Public License v3</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
