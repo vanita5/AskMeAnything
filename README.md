@@ -5,7 +5,7 @@ Let your followers ask you anything through a simple website and a Twitter bot a
 
 Anyone can enter a question on the website. A Twitter bot asks you the question and your reply will be visible on the website. Simple as that.
 
-View it in the wild: [http://vanita5.de/ask](vanita5.de/ask)
+View it in the wild: [vanita5.de/ask](http://vanita5.de/ask)
 (Slightly intended as a personal ask.fm alternative)
 
 Installation
