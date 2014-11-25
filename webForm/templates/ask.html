@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
+<div id="container">
 <h1 class="cover-heading">Ask {{name}} Anything</h1>
 
 <p class="lead">You can ask me anything anonymously on Twitter.</p>
 
-<form method="POST" action="/ask">
+<form method="POST" action="/ask/doAsk">
     <div class="input-group">
         <textarea name="q" rows="3" maxlength="130" class="form-control"></textarea>
         <div class="input-group-btn">
@@ -14,7 +15,7 @@
 </form>
 <br/>
 {% if asked %}
-<p style="color: green">Thanks for the question! You can ask another one in 2 minutes. TODO</p>
+<p style="color: green">Thanks for the question! You can ask another one if you like.</p>
 {% elif error %}
 <p style="color: red">An error occurred while asking your question. Try again later.</p>
 {% elif rate %}
@@ -22,5 +23,5 @@
 {% else %}
 <p>&nbsp;</p>
 {% endif %}
-
+</div>
 {% endblock %}

@@ -5,10 +5,12 @@ import tweepy
 import sqlite3
 import calendar
 import datetime
+import time
 from flask_limiter import Limiter
 from contextlib import closing
 from flask import Flask, render_template, request, redirect, g
-
+import logging
+logging.basicConfig(filename='logfile.log',level=logging.DEBUG)
 
 # #################
 # INITIALIZATION #
@@ -67,7 +69,6 @@ def ask():
 @app.route('/answers', defaults={'page': 1})
 @app.route('/answers/<int:page>')
 def answers(page):
-
     if not page or page <= 0:
         page = 1
 
@@ -99,8 +100,8 @@ def faq():
     return render_template('faq.html')
 
 
-@app.route('/ask', methods=['POST', 'GET'])
-@limiter.limit("1/minute")
+@app.route('/doAsk', methods=['POST', 'GET'])
+@limiter.limit("2/minute", key_func = lambda : request.environ['REMOTE_ADDR'])
 def doAsk():
     try:
         if request.method == 'POST':
@@ -121,9 +122,9 @@ def doAsk():
 
             # TODO persist in database
 
-        return redirect('/?asked=1')
+        return redirect('/ask?asked=1')
     except Exception as e:
-        return redirect('/?error=1')
+        return redirect('/ask?error=1')
 
 
 ##################
@@ -209,29 +210,33 @@ class AnswerDownloader(threading.Thread):
 
     def run(self):
         try:
-            since_id = get_since_id()
-            if len(since_id) > 0:
-                mentions = twitter.mentions_timeline(since_id)
-            else:
-                mentions = twitter.mentions_timeline()
+            while True:
+                since_id = get_since_id()
+                if len(since_id) > 0:
+                    mentions = twitter.mentions_timeline(since_id)
+                else:
+                    mentions = twitter.mentions_timeline()
 
-            for i in range(len(mentions) - 1, -1, -1):
-                print mentions[i].text
+                for i in range(len(mentions) - 1, -1, -1):
+                    tweet_id = mentions[i].id
+                    timestamp_utc = calendar.timegm(mentions[i].created_at.utctimetuple())
+                    q_id = mentions[i].in_reply_to_status_id
 
-                tweet_id = mentions[i].id
-                timestamp_utc = calendar.timegm(mentions[i].created_at.utctimetuple())
-                q_id = mentions[i].in_reply_to_status_id
+                    answer = mentions[i].text
+                    my_screen_name = ME.screen_name
+                    answer = answer.replace('@' + my_screen_name + ' ', '')
+                    try:
+                        insert_answer(q_id, answer, tweet_id, timestamp_utc)
+                    except:
+                        pass
+                    if i == 0:
+                        save_since_id(mentions[i].id)
 
-                answer = mentions[i].text
-                my_screen_name = ME.screen_name
-                answer = answer.replace('@' + my_screen_name + ' ', '')
-
-                insert_answer(q_id, answer, tweet_id, timestamp_utc)
-                if i == 0:
-                    save_since_id(mentions[i].id)
+                time.sleep(120)
 
         except Exception as e:
-            print e
+            logging.exception(e)
+
 
 
 if __name__ == '__main__':

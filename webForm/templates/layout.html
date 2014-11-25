@@ -20,15 +20,15 @@
                     <h3 class="masthead-brand">Ask Me Anything</h3>
                     <nav>
                         <ul class="nav masthead-nav">
-                          <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Ask</a></li>
-                          <li {% if request.path.startswith('/answers') %}class="active"{% endif %}><a href="/answers">Answers</a></li>
-                          <li {% if request.path == '/faq' %}class="active"{% endif %}><a href="/faq">How does it work?</a></li>
+                          <li {% if request.path == '/' %}class="active"{% endif %}><a href="/ask">Ask</a></li>
+                          <li {% if request.path.startswith('/answers') %}class="active"{% endif %}><a href="/ask/answers">Answers</a></li>
+                          <li {% if request.path == '/faq' %}class="active"{% endif %}><a href="/ask/faq">How does it work?</a></li>
                         </ul>
                     </nav>
                 </div>
             </div>
 
-            <span id="forkongithub"><a href="https://github.com/vanita5/TODO">Fork me on GitHub</a></span>
+            <span id="forkongithub"><a href="https://github.com/vanita5/AskMeAnything">Fork me on GitHub</a></span>
 
             <div class="inner cover">
                 {% block content %}
@@ -38,7 +38,7 @@
             <div class="mastfoot">
                 <div class="inner">
                     <p>Copyright 2014 <a href="https://twitter.com/_vanita5">@_vanita5</a> | Ask Me Anything is licensed under the
-                        <a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU Generel Public License v3</a></p>
+                        <a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License v3</a></p>
                 </div>
             </div>
         </div>
