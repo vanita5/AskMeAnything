@@ -5,14 +5,13 @@ import tweepy
 import sqlite3
 import calendar
 import datetime
-import time
 from flask_limiter import Limiter
 from contextlib import closing
 from flask import Flask, render_template, request, redirect, g
 import logging
 logging.basicConfig(filename='logfile.log',level=logging.DEBUG)
 
-# #################
+##################
 # INITIALIZATION #
 ##################
 
@@ -22,8 +21,9 @@ try:
     auth.set_access_token(config.access_token, config.access_token_secret)
     twitter = tweepy.API(auth)
     ME = twitter.me()
-except:
+except Exception as e:
     print "Twitter authentication failed!"
+    logging.exception(e)
     sys.exit(1)
 
 # init Flask
@@ -37,13 +37,6 @@ limiter = Limiter(app, global_limits=["200 per day", "50 per hour"])
 @app.before_request
 def before_request():
     g.db = connect_db()
-
-    thread = getattr(g, 'thread', None)
-    if thread is None:
-        g.thread = AnswerDownloader()
-
-    if not g.thread.isAlive():
-        g.thread.start()
 
 
 @app.teardown_request
@@ -118,9 +111,6 @@ def doAsk():
             tweet_id = result.id
             timestamp_utc = calendar.timegm(result.created_at.utctimetuple())
             insert_question(tweet_id, question, timestamp_utc)
-
-
-            # TODO persist in database
 
         return redirect('/ask?asked=1')
     except Exception as e:
@@ -199,46 +189,45 @@ def ratelimit_handler(e):
     return render_template('ask.html', name=config.USERNAME, rate=1)
 
 
-###############
-# CLASS BLOCK #
-###############
+##################
+# BACKGROUND JOB #
+##################
 
-class AnswerDownloader(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.daemon = True
+def answerCrawlerBackgroundJob():
+    since_id = get_since_id()
+    print "background job started"
+    try:
+        if len(since_id) > 0:
+            mentions = twitter.mentions_timeline(since_id)
+        else:
+            mentions = twitter.mentions_timeline()
 
-    def run(self):
-        try:
-            while True:
-                since_id = get_since_id()
-                if len(since_id) > 0:
-                    mentions = twitter.mentions_timeline(since_id)
-                else:
-                    mentions = twitter.mentions_timeline()
+        for i in range(len(mentions) - 1, -1, -1):
+            if mentions[i].author.screen_name != config.SCREENNAME:
+                break
+            tweet_id = mentions[i].id
+            timestamp_utc = calendar.timegm(mentions[i].created_at.utctimetuple())
+            q_id = mentions[i].in_reply_to_status_id
 
-                for i in range(len(mentions) - 1, -1, -1):
-                    tweet_id = mentions[i].id
-                    timestamp_utc = calendar.timegm(mentions[i].created_at.utctimetuple())
-                    q_id = mentions[i].in_reply_to_status_id
+            answer = mentions[i].text
+            my_screen_name = ME.screen_name
+            answer = answer.replace('@' + my_screen_name + ' ', '')
 
-                    answer = mentions[i].text
-                    my_screen_name = ME.screen_name
-                    answer = answer.replace('@' + my_screen_name + ' ', '')
-                    try:
-                        insert_answer(q_id, answer, tweet_id, timestamp_utc)
-                    except:
-                        pass
-                    if i == 0:
-                        save_since_id(mentions[i].id)
+            try:
+                insert_answer(q_id, answer, tweet_id, timestamp_utc)
+            except sqlite3.IntegrityError:
+                pass
 
-                time.sleep(120)
+            if i == 0:
+                save_since_id(mentions[i].id)
+    except Exception as e:
+        logging.exception(e)
+        pass
 
-        except Exception as e:
-            logging.exception(e)
-
+    threading.Timer(140, answerCrawlerBackgroundJob).start()
 
 
 if __name__ == '__main__':
     init_db()
+    answerCrawlerBackgroundJob()
     app.run(host='0.0.0.0', debug=True)
